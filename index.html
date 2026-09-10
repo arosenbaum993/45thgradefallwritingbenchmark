@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 4-5 ELA Writing Benchmark</title>
+<style>
+:root{--navy:#0b2f68;--navy2:#061f4d;--line:#9aa8ba;--pale:#edf2f7;--yellow:#ffe36a;--ink:#171b22;--gold:#bd8628}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;height:100vh;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#dce3eb}
+button{font:inherit}
+
+/* ---- header ---- */
+.mast{min-height:66px;background:#fff;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:8px 15px}
+.student{font-size:14px;line-height:1.05}
+.student strong{display:block;font-size:20px}
+.logo{text-align:center;font-size:30px;font-weight:800;color:#111;letter-spacing:-1px}
+.logo span{border-bottom:4px solid var(--gold)}
+.practice{text-align:right;font-size:13px;font-weight:700;color:#4a5665}
+.question{min-height:30px;background:var(--navy);color:#fff;padding:5px 22px;font-weight:700}
+
+/* ---- toolbar ---- */
+.toolbar{min-height:74px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:9px 20px;flex-wrap:wrap}
+.tool{height:50px;min-width:56px;border:2px solid var(--navy);border-radius:5px;background:#fff;color:var(--navy);font-size:22px;font-weight:bold;cursor:pointer;padding:2px 8px}
+.tool:hover,.tool.active{background:#dce9fb}
+.tool:focus-visible{outline:3px solid #e6ad28;outline-offset:2px}
+.tool:disabled{opacity:.45;cursor:default}
+.tool:disabled:hover{background:var(--navy)}
+.tool small{display:block;font-size:9px;line-height:1.1}
+.navtool{background:var(--navy);color:#fff;font-size:30px}
+.navtool:hover{background:var(--navy2)}
+.divider{height:48px;border-left:1px solid #c8d0da;margin:0 2px}
+.spacer{flex:1}
+
+/* ---- workspace ---- */
+.shell{flex:1 1 auto;min-height:480px;display:flex;padding:12px 2.8%}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;border:3px solid var(--navy);background:#fff}
+.pane{min-width:0;min-height:0;display:flex;flex-direction:column}
+.pane:first-child{border-right:3px solid var(--navy)}
+.pane-title{text-align:center;font-weight:800;font-size:21px;padding:7px;border-bottom:2px solid var(--line)}
+.scroll,.task{min-height:0;overflow:auto;flex:1;padding:16px 34px;font-size:18px;line-height:1.42;scrollbar-color:#4c5158 #eef0f3}
+.scroll{position:relative}
+
+/* ---- sources ---- */
+.source{padding:4px 0 30px}
+.source+.source{border-top:4px solid var(--navy);padding-top:24px;margin-top:10px}
+.source .pane-title{margin-bottom:12px}
+.source h2{text-align:center;font-size:21px;margin:4px 0}
+.by{text-align:center;font-style:italic;margin:0 0 18px;color:#444}
+.source p{margin:0 0 15px;padding-left:30px;position:relative}
+.num{position:absolute;left:0;font-weight:700;color:#3f5065}
+.photo{display:block;width:88%;max-width:440px;height:auto;margin:6px auto 4px;border:1px solid #a8a8a8;background:#eaf5fb}
+.photo-label{text-align:center;font-size:.82em;margin:0 6% 18px;color:#444}
+.factbox,.data{border:2px solid #8292a6;background:#f3f6f9;padding:12px 16px;margin:18px 14px}
+.factbox h3,.data h3{text-align:center;margin:0 0 8px;font-size:17px}
+
+/* ---- writing task ---- */
+.task{padding:12px 14px}
+.promptbox,.prompt{border:2px solid #98a4b4;background:#fbfbfb;padding:10px}
+.promptbox p,.prompt p{margin:0 0 14px}
+.promptbox p:last-child,.prompt p:last-child{margin-bottom:0}
+.paper-note{font-weight:800;margin:23px 0 10px}
+.answer-paper,.paper{height:245px;border:2px solid #9aa8b8;background:repeating-linear-gradient(#fff 0,#fff 34px,#b7c4d2 35px,#fff 36px);position:relative}
+.answer-paper:before,.paper:before{content:"Write your response on the paper provided by your teacher.";position:absolute;top:14px;left:18px;background:#fff;color:#526173;padding:3px 8px;font-style:italic}
+
+/* ---- status bar ---- */
+.status{min-height:40px;background:#acb7c6;display:flex;align-items:center;padding:0 10px;gap:12px;color:var(--navy);font-weight:bold}
+.status button{border:0;background:transparent;color:var(--navy);font-weight:bold;cursor:pointer;padding:8px}
+.status button:hover{text-decoration:underline}
+
+/* ---- tools ---- */
+.highlight{background:var(--yellow)}
+.line-reader{position:fixed;left:0;right:0;height:46px;border-top:3px solid #0a3476aa;border-bottom:3px solid #0a3476aa;background:#ffe66f35;pointer-events:none;z-index:10;display:none}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal.open{display:flex}
+.card{width:min(720px,94vw);max-height:88vh;overflow:auto;background:#fff;border:4px solid var(--navy);border-radius:7px;padding:22px;font-size:17px;box-shadow:0 10px 35px #0007}
+.card h2{color:var(--navy);margin-top:0}
+.card li{margin:8px 0}
+.close{float:right;border:0;border-radius:4px;background:var(--navy);color:#fff;padding:8px 14px;cursor:pointer}
+.notes{width:100%;height:190px;padding:10px;font:16px Arial}
+.rubric-table{width:100%;border-collapse:collapse;font-size:14px}
+.rubric-table th,.rubric-table td{border:1px solid #697b91;padding:7px;vertical-align:top}
+.rubric-table th{background:var(--navy);color:#fff}
+.print-sheet{display:none}
+.jump{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:4;background:var(--navy);color:#fff;border:0;border-radius:18px;padding:7px 14px;font-weight:700;display:none}
+
+/* ---- start screen ---- */
+#gate{position:fixed;inset:0;z-index:60;background:#dce3eb;display:flex;align-items:center;justify-content:center;padding:22px}
+#gate.hide{display:none}
+.gate-card{background:#fff;border:3px solid var(--navy);max-width:560px;width:100%;padding:30px 34px 24px;text-align:center}
+.gate-logo{font-size:28px;font-weight:800;letter-spacing:-1px;color:#111}
+.gate-logo span{border-bottom:4px solid var(--gold)}
+.gate-card h1{font-size:21px;margin:16px 0 4px}
+.gate-card .who{font-size:15px;margin:0 0 22px;color:#4a5665}
+#startBtn{background:var(--navy);color:#fff;border:0;border-radius:6px;font:700 20px Arial,Helvetica,sans-serif;padding:16px 38px;cursor:pointer}
+#startBtn:focus-visible{outline:3px solid #e6ad28;outline-offset:3px}
+.gate-note{margin-top:19px;font-size:12px;color:#596575}
+
+/* ---- small screens ---- */
+@media(max-width:900px){
+  .mast{grid-template-columns:1fr 1fr}
+  .practice{display:none}
+  .logo{text-align:right}
+  .shell{min-height:0;display:block}
+  .workspace{grid-template-columns:1fr}
+  .pane:first-child{border-right:0;border-bottom:3px solid var(--navy)}
+  .scroll,.task{max-height:65vh}
+  .jump{display:block}
+}
+
+/* ---- print: lined response paper only ---- */
+@media print{
+  body{background:#fff;display:block}
+  #gate,.mast,.question,.toolbar,.shell,.status,.modal,.line-reader,.jump{display:none!important}
+  .print-sheet{display:block;padding:.25in .45in}
+  .print-sheet h1{text-align:center;font-size:18pt}
+  .info{display:flex;gap:25px;margin:18px 0}
+  .line{display:inline-block;min-width:210px;border-bottom:1px solid #000}
+  .writing-lines{height:8.1in;background:repeating-linear-gradient(#fff 0,#fff 25px,#777 26px);border-left:1px solid #aaa;border-right:1px solid #aaa}
+  .mini{font-size:10pt}
+}
+</style>
+<noscript><style>#gate{display:none}</style></noscript>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">DRC <span>INSIGHT</span><sup>&#8482;</sup></div>
+    <h1>Grade 4-5 Source-Based Writing</h1>
+    <p class="who">Fall Writing Benchmark</p>
+    <button id="startBtn" type="button">Start Test</button>
+    <p class="gate-note">Classroom benchmark. Not an official testing platform.<br>You will read on the screen and write your response on paper.</p>
+  </div>
+</div>
+<script>
+/* Start screen. Kept separate and first so nothing later on the page can stop it from opening. */
+(function(){
+  var gate=document.getElementById('gate'), btn=document.getElementById('startBtn');
+  if(!gate||!btn) return;
+  btn.addEventListener('click',function(){
+    gate.classList.add('hide');
+    try{
+      var el=document.documentElement, req=el.requestFullscreen||el.webkitRequestFullscreen;
+      if(req){ var p=req.call(el); if(p&&p.catch) p.catch(function(){}); }
+    }catch(e){}
+  });
+  try{ btn.focus(); }catch(e){}
+})();
+</script>
+
+<div class="line-reader" id="lineReader" aria-hidden="true"></div>
+
+<header class="mast">
+  <div class="student"><strong>Grade 4-5 Source-Based Writing</strong>Fall Writing Benchmark</div>
+  <div class="logo">DRC <span>INSIGHT</span><sup>&#8482;</sup></div>
+  <div class="practice">CLASSROOM BENCHMARK<br>Not an official testing platform</div>
+</header>
+
+<div class="question">Question: 1</div>
+
+<div class="toolbar" role="toolbar" aria-label="Reading and writing tools">
+ <button class="tool navtool" id="prevBtn" type="button" title="Previous source" aria-label="Previous source">&#8592;<small>Previous</small></button>
+ <button class="tool navtool" id="nextBtn" type="button" title="Next source" aria-label="Next source">&#8594;<small>Next</small></button>
+ <span class="divider" aria-hidden="true"></span>
+ <button class="tool" id="marker" type="button" title="Highlight selected source text">&#128397;<small>Highlight</small></button>
+ <button class="tool" id="noteBtn" type="button" title="Open notepad">&#9635;<small>Notepad</small></button>
+ <button class="tool" id="zoom" type="button" title="Change text size">A+<small>Text Size</small></button>
+ <button class="tool" id="lineBtn" type="button" title="Toggle line reader">&#9552;<small>Line Reader</small></button>
+ <button class="tool" id="checkBtn" type="button" title="Open writer's checklist">&#9745;<small>Checklist</small></button>
+ <button class="tool" id="rubricBtn" type="button" title="Open writing rubric">&#9636;<small>Rubric</small></button>
+ <span class="spacer"></span>
+ <button class="tool" id="fsBtn" type="button" title="Fill the screen">&#9974;<small>Full Screen</small></button>
+ <button class="tool" id="printBtn" type="button" title="Print response paper">&#9639;<small>Print Paper</small></button>
+</div>
+
+<main class="shell"><div class="workspace">
+<section class="pane"><div class="pane-title">SOURCES</div>
+<div class="scroll" id="sourceScroll">
+<article class="source" id="one">
+        <div class="pane-title">SOURCE 1</div>
+        <h2>A Classroom Without Walls</h2><div class="by">by Maya Bennett</div>
+        <p><span class="num">1</span>At Pine Hill Elementary, one classroom has no desks, walls, or ceiling. It is the school garden. Students grow lettuce, tomatoes, herbs, and flowers in raised beds. Teachers use the garden for lessons throughout the year.</p>
+        <p><span class="num">2</span>A garden can make science easier to understand. Instead of only reading about plant parts, students can examine real roots, stems, leaves, and flowers. They can observe insects, measure rainfall, and record how quickly plants grow. These activities give students evidence they can see and touch.</p>
+        <p><span class="num">3</span>Gardens can support other subjects too. Students use multiplication to plan equal rows of seeds. They calculate the area of planting beds and write observations in journals. When vegetables are ready, students can study nutrition or use the harvest in a simple recipe.</p>
+        <svg class="photo" viewBox="0 0 440 180" role="img" aria-label="Illustration of raised garden beds with rows of plants in a school garden">
+          <rect width="440" height="180" fill="#dcefff"/>
+          <circle cx="385" cy="38" r="22" fill="#ffd95a"/>
+          <rect y="110" width="440" height="70" fill="#8fc37a"/>
+          <g fill="#8b5a2b"><rect x="28" y="96" width="170" height="46" rx="3"/><rect x="242" y="96" width="170" height="46" rx="3"/></g>
+          <g fill="#5e3b1a"><rect x="34" y="102" width="158" height="16"/><rect x="248" y="102" width="158" height="16"/></g>
+          <g fill="#3e8f3e">
+            <ellipse cx="55" cy="96" rx="12" ry="9"/><ellipse cx="85" cy="94" rx="12" ry="10"/><ellipse cx="115" cy="96" rx="12" ry="9"/><ellipse cx="145" cy="94" rx="12" ry="10"/><ellipse cx="175" cy="96" rx="12" ry="9"/>
+            <ellipse cx="270" cy="96" rx="12" ry="9"/><ellipse cx="300" cy="94" rx="12" ry="10"/><ellipse cx="330" cy="96" rx="12" ry="9"/><ellipse cx="360" cy="94" rx="12" ry="10"/><ellipse cx="390" cy="96" rx="12" ry="9"/>
+          </g>
+          <g fill="#d64545"><circle cx="85" cy="90" r="3.5"/><circle cx="145" cy="90" r="3.5"/><circle cx="300" cy="90" r="3.5"/><circle cx="360" cy="90" r="3.5"/></g>
+          <rect x="214" y="70" width="12" height="72" fill="#6b6b6b"/><rect x="204" y="62" width="32" height="12" rx="2" fill="#9a9a9a"/>
+        </svg>
+        <div class="photo-label">A school garden can become an outdoor classroom.</div>
+        <p><span class="num">4</span>Time outdoors may also help students return to class ready to focus. Digging, watering, and pulling weeds give students a chance to move. Working in teams requires students to share tools, solve problems, and care for something together.</p>
+        <p><span class="num">5</span>A school does not need a large field to begin. A few containers in a sunny area can hold herbs or small vegetables. Families and local businesses may donate seeds, soil, or tools. Starting small allows a school to learn what works before making the garden larger.</p>
+        <div class="factbox"><h3>What Students Can Practice in a Garden</h3>Observing changes &bull; Measuring length and area &bull; Collecting data &bull; Writing explanations &bull; Working as a team</div>
+      </article>
+      <article class="source" id="two">
+        <div class="pane-title">SOURCE 2</div>
+        <h2>Before We Plant</h2><div class="by">by Jordan Lee</div>
+        <p><span class="num">1</span>A school garden sounds exciting, but it needs more than seeds and sunshine. Before planting, a school must decide who will do the work, how much the garden will cost, and what will happen when school is closed.</p>
+        <p><span class="num">2</span>Plants require steady care. During hot weather, some vegetables need water every day. Students may be away on weekends, holidays, and summer break. Without a watering plan, plants can dry out quickly. Weeds and insects may also damage a garden if no one checks it regularly.</p>
+        <p><span class="num">3</span>Costs can add up. A garden may need soil, lumber or containers, gloves, tools, seeds, and a hose. Old boards can splinter, and tools must be stored safely. Schools must also choose a location with enough sunlight that does not block playgrounds or walkways.</p>
+        <div class="factbox"><h3>A Sample Small-Garden Budget</h3>Containers: $45<br>Soil and compost: $60<br>Seeds and plants: $35<br>Tools and gloves: $55<br><strong>Total: $195</strong></div>
+        <p><span class="num">4</span>Teachers already have many lessons to prepare. If garden jobs take too much instructional time, the project may become a burden. A garden works best when it connects directly to learning instead of becoming one more chore.</p>
+        <p><span class="num">5</span>These challenges do not mean a school should never plant a garden. They mean the school needs a realistic plan. A garden committee could create a schedule, set a budget, and recruit family volunteers. Beginning with two or three containers would let students test the idea before the school spends more money.</p>
+        <p><span class="num">6</span>Careful planning is as important as planting. If a school cannot provide time, money, and regular care, it should choose another outdoor project. If the school can solve those problems, a small garden may grow into a useful learning space.</p>
+      </article>
+</div></section>
+<section class="pane"><div class="pane-title">WRITING TASK</div>
+<div class="task" id="task">
+<div class="promptbox">
+        <p>Consider what you have learned about school gardens from reviewing the two sources. You will now construct an original text using your own ideas. In your text, answer the research question for the specific purpose and audience shown below.</p>
+        <p><strong>Research Question: <em>Should our school create an outdoor learning garden?</em></strong></p>
+        <p><strong>Purpose:</strong> to provide and support your opinion about whether the school should create an outdoor learning garden</p>
+        <p><strong>Audience:</strong> your principal, teachers, and classmates</p>
+        <p>Be sure to give reasons for your opinion and support those reasons with information from both sources. Refer to the Writer&rsquo;s Checklist as you plan, write, and edit your text.</p>
+      </div>
+      <p class="paper-note">Now write your text on the paper provided by your teacher. Refer to the Writer&rsquo;s Checklist as you write and edit your text.</p>
+      <div class="answer-paper" aria-label="Reminder to write on paper"></div>
+</div></section>
+</div></main>
+
+<div class="status"><button id="checkBottom" type="button">&#9745; Writer's Checklist</button><span class="spacer"></span><button id="helpBtn" type="button">? Help</button></div>
+
+<button class="jump" id="jumpTask" type="button">Jump to Writing Task</button>
+
+<div class="modal" id="checkModal" role="dialog" aria-modal="true" aria-labelledby="checkTitle"><div class="card"><button class="close" type="button" data-close>Close</button><h2 id="checkTitle">Grade 4-5 Writer's Checklist</h2><p>In my well-written text, I made sure to:</p><ul><li>introduce the topic clearly.</li><li>state my opinion or position.</li><li>organize reasons and evidence in a logical order.</li><li>support each reason with evidence from both sources.</li><li>explain how the evidence supports my reason.</li><li>use linking words and phrases to connect ideas.</li><li>use precise words suited to my audience.</li><li>provide a conclusion related to the opinion presented.</li><li>correct errors in spelling, capitalization, punctuation, and grammar.</li></ul></div></div>
+<div class="modal" id="rubricModal" role="dialog" aria-modal="true" aria-labelledby="rubricTitle"><div class="card"><button class="close" type="button" data-close>Close</button><h2 id="rubricTitle">Georgia Milestones Writing Rubric</h2><table class="rubric-table"><thead><tr><th>Trait</th><th>Highest Score</th><th>What Strong Writing Shows</th></tr></thead><tbody><tr><td><strong>Purpose &amp; Organization</strong><br>0-3 points</td><td>3</td><td>Clear opinion or position; an introduction that sets up the topic; ideas in an order that makes sense; transitions between reasons; a conclusion that closes the piece.</td></tr><tr><td><strong>Evidence &amp; Elaboration</strong><br>0-3 points</td><td>3</td><td>Reasons that support the opinion; details and information pulled from both sources; explanation of how each detail supports the reason; word choice suited to the audience.</td></tr><tr><td><strong>Language Usage &amp; Conventions</strong><br>0-2 points</td><td>2</td><td>Complete sentences of varying length; grade-level spelling, capitalization, and punctuation; errors do not get in the way of meaning.</td></tr></tbody></table><p><strong>Total possible score: 8 points.</strong></p></div></div>
+<div class="modal" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="noteTitle"><div class="card"><button class="close" type="button" data-close>Close</button><h2 id="noteTitle">Notepad</h2><p>These notes are for planning only. They are cleared when the browser is closed and they are not turned in. Write your response on paper.</p><textarea class="notes" id="notes" aria-label="Student planning notes" placeholder="Plan your opinion, reasons, and evidence here."></textarea><button class="close" id="clearNotes" type="button" style="float:none;background:#6b2631;margin-top:8px">Clear Notes</button></div></div>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="card"><button class="close" type="button" data-close>Close</button><h2 id="helpTitle">Help</h2><ul><li><strong>Previous and Next:</strong> move between Source 1 and Source 2.</li><li><strong>Highlight:</strong> select words in one paragraph, then choose Highlight.</li><li><strong>Text Size:</strong> make the words larger or smaller.</li><li><strong>Line Reader:</strong> a band that follows your mouse to help you keep your place.</li><li><strong>Full Screen:</strong> fill the whole screen. Press Esc to leave full screen.</li><li><strong>Print Paper:</strong> open the print window for lined response paper.</li><li><strong>You write on paper.</strong> Nothing you type here is turned in.</li></ul></div></div>
+
+<section class="print-sheet">
+<h1>Grade 4-5 Source-Based Writing Response</h1>
+<div class="info">Name: <span class="line"></span> Date: <span class="line"></span></div>
+<p><strong>Research Question:</strong> Should our school create an outdoor learning garden?</p>
+<p class="mini">Opinion or position &#183; Reasons &#183; Evidence from both sources &#183; Elaboration &#183; Conclusion &#183; Conventions</p>
+<div class="writing-lines"></div>
+</section>
+
+<script>
+var qs=function(s){return document.querySelector(s)},
+    qsa=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function on(sel,fn){var el=qs(sel); if(el) el.addEventListener('click',fn); return el;}
+function openM(id){var m=qs(id); if(!m)return; m.classList.add('open'); var c=m.querySelector('.close'); if(c)c.focus();}
+function closeM(m){m.classList.remove('open')}
+qsa('[data-close]').forEach(function(b){b.onclick=function(){closeM(b.closest('.modal'))}});
+qsa('.modal').forEach(function(m){m.onclick=function(e){if(e.target===m)closeM(m)}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=qs('.modal.open'); if(m)closeM(m)}});
+
+on('#checkBtn',function(){openM('#checkModal')});
+on('#checkBottom',function(){openM('#checkModal')});
+on('#rubricBtn',function(){openM('#rubricModal')});
+on('#noteBtn',function(){openM('#noteModal')});
+on('#helpBtn',function(){openM('#helpModal')});
+on('#printBtn',function(){window.print()});
+
+/* ---- full screen: best effort only; the page works the same without it ---- */
+on('#fsBtn',function(){
+  try{
+    if(document.fullscreenElement||document.webkitFullscreenElement){
+      var ex=document.exitFullscreen||document.webkitExitFullscreen; if(ex) ex.call(document); return;
+    }
+    var el=document.documentElement, req=el.requestFullscreen||el.webkitRequestFullscreen;
+    if(req){ var p=req.call(el); if(p&&p.catch) p.catch(function(){}); }
+  }catch(e){}
+});
+
+/* ---- text size ---- */
+var size=18, zoomEl=qs('#zoom');
+if(zoomEl) zoomEl.onclick=function(){
+  size = size>=26 ? 16 : size+2;
+  var sc=qs('#sourceScroll'), tk=qs('#task');
+  if(sc) sc.style.fontSize=size+'px';
+  if(tk) tk.style.fontSize=size+'px';
+  zoomEl.classList.toggle('active',size>18);
+};
+
+/* ---- highlighter ---- */
+on('#marker',function(){
+  var sel=window.getSelection();
+  var scroll=qs('#sourceScroll');
+  if(!sel||sel.isCollapsed){ alert('Select source text first, then choose Highlight.'); return; }
+  var r=sel.getRangeAt(0);
+  if(!scroll||!scroll.contains(r.commonAncestorContainer)){ alert('Highlighting is available in the source panel.'); return; }
+  var m=document.createElement('mark'); m.className='highlight';
+  try{ r.surroundContents(m); sel.removeAllRanges(); }
+  catch(e){ alert('Select words within one paragraph to highlight.'); }
+});
+
+/* ---- previous / next: scrolls only the source panel, never the page ---- */
+var pane=qs('#sourceScroll'), stops=qsa('#sourceScroll .source'), stop=0;
+function setNav(){
+  var p=qs('#prevBtn'), n=qs('#nextBtn');
+  if(p) p.disabled=(stop<=0);
+  if(n) n.disabled=(stop>=stops.length-1);
+}
+function go(d){
+  if(!pane||!stops.length) return;
+  stop=Math.max(0,Math.min(stops.length-1,stop+d));
+  var top=stops[stop].getBoundingClientRect().top-pane.getBoundingClientRect().top+pane.scrollTop-4;
+  try{ pane.scrollTo({top:top,behavior:'smooth'}); }catch(e){ pane.scrollTop=top; }
+  setNav();
+}
+on('#prevBtn',function(){go(-1)});
+on('#nextBtn',function(){go(1)});
+setNav();
+
+/* ---- line reader ---- */
+var lr=qs('#lineReader'), lineOn=false;
+on('#lineBtn',function(){
+  lineOn=!lineOn;
+  if(lr) lr.style.display=lineOn?'block':'none';
+  qs('#lineBtn').classList.toggle('active',lineOn);
+});
+document.addEventListener('mousemove',function(e){ if(lineOn&&lr) lr.style.top=Math.max(0,e.clientY-23)+'px'; });
+
+/* ---- notepad: session only, so a shared Chromebook does not carry notes
+        from one student to the next, and a blocked storage API cannot
+        break the rest of the toolbar ---- */
+var notes=qs('#notes'), KEY='g45notes';
+function store(op,val){
+  try{
+    if(op==='get') return window.sessionStorage.getItem(KEY)||'';
+    if(op==='set') window.sessionStorage.setItem(KEY,val);
+    if(op==='del') window.sessionStorage.removeItem(KEY);
+  }catch(e){}
+  return '';
+}
+if(notes){
+  notes.value=notes.value||store('get');
+  notes.addEventListener('input',function(){store('set',notes.value)});
+}
+on('#clearNotes',function(){
+  if(confirm('Clear all notepad text?')){ if(notes) notes.value=''; store('del'); }
+});
+
+on('#jumpTask',function(){ var t=qs('#task'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); });
+</script>
+</body>
+</html>
